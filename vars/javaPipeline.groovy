@@ -74,7 +74,13 @@ def call(Map cfg = [:]) {
                           port: cfg.devPort ?: 8081, envName: 'DEV')
         }
       }
-
+      stage('Deploy to QA') {
+        when { allOf { not { changeRequest() }; branch 'Test-Env' } }
+        steps {
+          deployContainer(name: "${cfg.appName}-qa", image: "${env.IMAGE_REPO}:${env.IMAGE_TAG}",
+                          port: cfg.qaPort ?: 8083, envName: 'QA')
+        }
+      }
       stage('Approval for PROD') {
         when { allOf { not { changeRequest() }; branch 'main' } }
         steps {
