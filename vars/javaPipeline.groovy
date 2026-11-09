@@ -57,7 +57,7 @@ def call(Map cfg = [:]) {
       // ---------- Everything below runs only AFTER a merge, never for a PR ----------
 
       stage('Docker Build & Push') {
-        when { allOf { not { changeRequest() }; anyOf { branch 'develop'; branch 'main' } } }
+        when { allOf { not { changeRequest() }; anyOf { branch 'develop'; branch 'Test-Env'; branch 'main' } } }
         steps {
           sh '''
             docker build -t ${IMAGE_REPO}:${IMAGE_TAG} .
