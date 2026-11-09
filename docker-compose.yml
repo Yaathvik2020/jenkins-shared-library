@@ -1,0 +1,25 @@
+services:
+  jenkins:
+    build: .
+    container_name: jenkins-company-demo
+    user: root                      # demo only: lets Jenkins use the host Docker. Companies use K8s agents instead
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - ./casc:/var/jenkins_home/casc:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  # Image registry (in a company: ECR / Nexus / Harbor / Docker Hub)
+  registry:
+    image: registry:2
+    container_name: local-registry
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:

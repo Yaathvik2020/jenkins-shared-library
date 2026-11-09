@@ -1,0 +1,14 @@
+workflow-aggregator
+git
+github
+github-branch-source
+cloudbees-folder
+configuration-as-code
+job-dsl
+credentials-binding
+junit
+timestamper
+ws-cleanup
+build-timeout
+pipeline-stage-view
+pipeline-groovy-lib

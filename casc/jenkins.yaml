@@ -1,0 +1,46 @@
+# Jenkins configured as code. Restart Jenkins and it comes back exactly like this.
+jenkins:
+  systemMessage: "Company-style CI/CD demo (Configuration as Code)"
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"                 # DevOps / Jenkins admin
+          password: "${ADMIN_PASSWORD}"
+        - id: "release-manager"       # the ONLY user allowed to approve PROD
+          password: "${RELEASE_PASSWORD}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+unclassified:
+  location:
+    url: "${JENKINS_URL}"
+  # The shared library every Jenkinsfile loads with @Library('company-pipeline')
+  globalLibraries:
+    libraries:
+      - name: "company-pipeline"
+        defaultVersion: "main"
+        allowVersionOverride: true
+        implicit: false
+        retriever:
+          modernSCM:
+            scm:
+              git:
+                remote: "https://github.com/${GITHUB_OWNER}/jenkins-shared-library.git"
+                credentialsId: "github-creds"
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "github-creds"
+              username: "${GITHUB_USER}"
+              password: "${GITHUB_TOKEN}"
+              description: "GitHub token"
+
+jobs:
+  - file: /var/jenkins_home/casc/multibranch-job.groovy
